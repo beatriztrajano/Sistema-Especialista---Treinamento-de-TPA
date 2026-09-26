@@ -1,162 +1,96 @@
-import json
-
-def carregar_base_conhecimento():
-    try:
-        with open("base_conhecimento.json", "r", encoding="utf-8") as arquivo:
-            return json.load(arquivo)
-    except FileNotFoundError:
-        print("\n[ERRO] O ficheiro 'base_conhecimento.json' não foi encontrado!")
-        print("Certifique-se de que o ficheiro JSON está na mesma pasta do código Python.")
-        return None
-
-def motor_diagnostico(texto_usuario, lista_regras):
-    texto_usuario = texto_usuario.lower()
-    resultados = []
-
-    for regra in lista_regras:
-        if "codigo" in regra and regra["codigo"] == texto_usuario.strip():
-            return regra
-
-        pontuacao = 0
-        for sintoma in regra["sintomas"]:
-            if sintoma in texto_usuario:
-                pontuacao += 1
-
-        if pontuacao > 0:
-            resultados.append((regra, pontuacao))
-
-    if not resultados:
-        return None
-
-    resultados.sort(key=lambda x: x[1], reverse=True)
-    return resultados[0][0]
-
-def codigos(base_dados):
-    print("Digite o código ou descreva o problema:")
-    entrada = input("> ")
-
-    regras = base_dados.get("erros_codigo", [])
-    resultado = motor_diagnostico(entrada, regras)
-
-    exibir_resultado(resultado)
-
-def comprovante(base_dados):
-    print("Descreva o problema:")
-    entrada = input("> ")
-
-    regras = base_dados.get("problemas_fisicos", [])
-    resultado = motor_diagnostico(entrada, regras)
-
-    exibir_resultado(resultado)
-
-def exibir_resultado(resultado):
-    """Formata e exibe a resposta do Sistema Especialista."""
-    if resultado:
-        print("\n==================================================")
-        print(f"Diagnóstico: {resultado['titulo']}")
-        print(f"Explicação:  {resultado['explicacao']}")
-        print(f"Ação Sugerida: {resultado['acao']}")
-        print("==================================================")
-    else:
-        print("\nNão foi possível identificar o problema com base na descrição informada.")
-
-def navegar():
-    while True:
-        print("\n---------------------------------")
-        print("1- Pagamento")
-        print("2- Histórico")
-        print("3- Voltar")
-        print("---------------------------------")
-        try:
-            opcao = int(input("Digite uma opção: "))
-            if opcao == 1:
-                print("\nPagamento:")
-                print("Na realização de uma venda, o usuário irá escolher o tipo de pagamento de acordo com preferência do consumidor.")
-                break
-            elif opcao == 2:
-                print("\nHistórico:")
-                print("Toda ação de estorno, impressão e análise serão feitas aqui. Aparece uma lista com o tipo de pagamento usado, horário da compra e valor pago de vendas anteriores. É possível selecionar cada movimentação para maiores detalhes ao apertar a opção 'Detalhes' no canto inferior da tela e podendo acessar 'Imprimir' para que o relatório específico ou geral seja fisicamente impresso. Outra opção dentro de 'Detalhes' seria a de estorno do pagamento.")
-                break
-            elif opcao == 3:
-                break
-            else:
-                print("Opção inválida!")
-        except ValueError:
-            print("Por favor, digite um número válido.")
-
-def basicas():
-    while True:
-        print("\n---------------------------------")
-        print("1- Como navegar pelo Sistema")
-        print("2- Tipos de Pagamentos permitidos")
-        print("---------------------------------")
-        try:
-            opcao = int(input("Digite uma opção: "))
-            if opcao == 1:
-                print("\n==================================================")
-                print("Ao ligar a máquina, a tela disponibilizará um menu de opção. Essas opções são selecionadas manualmente através da interface interativa do dispositivo e em todas as telas o usuário terá a opção de voltar para o menu inicial.")
-                print("\nPagamento:Na realização de uma venda, o usuário irá escolher o tipo de pagamento de acordo com preferência do consumidor")
-                print("\nHistórico: Toda ação de estorno, impressão e análise serão feitas aqui. Aparece uma lista com o tipo de pagamento usado, horário da compra e valor pago de vendas anteriores. É possível selecionar cada movimentação para maiores detalhes ao apertar a opção “Detalhes” no canto inferior da tela e podendo acessar “Imprimir” para que o relatório específico ou geral seja fisicamente impresso. Outra opção dentro de “Detalhes” seria a de estorno do pagamento.")
-                print("\nFechar: O equipamento desligará.")
-                print("==================================================")
-                break
-            elif opcao == 2:
-               print("\n==================================================")
-               print("Antes de iniciar o pagamento, pergunte ao cliente qual forma de pagamento ele prefere. Respeitar essa preferência torna o atendimento mais rápido, prático e adequado às necessidades de cada cliente.")
-               print("\nAo selecionar o tipo de pagamento, aparece na tela para que o usuário digite o valor e entregue temporariamente o dispositivo ao cliente para que o mesmo possa realizar a transferência. A máquina pode gerar QR code, fazer scan magnético na aproximação e permitir a iserção de senha no PIN pad.")
-               print("==================================================")
-               break
-            else:
-                print("Opção inválida")
-        except ValueError:
-            print("Por favor, digite um número válido.")
-
-def erro(base_dados):
-    while True:
-        print("\n---------------------------------")
-        print("1- Códigos de Erro")
-        print("2- Problemas de Comprovante")
-        print("3- Voltar")
-        print("---------------------------------")
-        try:
-            opcao = int(input("Digite uma opção: "))
-            if opcao == 1:
-                codigos(base_dados)
-                break
-            elif opcao == 2:
-                comprovante(base_dados)
-                break
-            elif opcao == 3:
-                break
-            else:
-                print("Opção inválida")
-        except ValueError:
-            print("Por favor, digite um número válido.")
-
-def main():
-    base_dados = carregar_base_conhecimento()
-    if not base_dados:
-        return
-
-    while True:
-        print("\n---------------------------------")
-        print("1- Operações Básicas")
-        print("2- Diagnóstico de Erro")
-        print("3- Sair")
-        print("---------------------------------")
-        try:
-            opcao = int(input("Digite uma opção: "))
-            if opcao == 1:
-                basicas()
-            elif opcao == 2:
-                erro(base_dados)
-            elif opcao == 3:
-                print("Saindo do sistema...")
-                break
-            else:
-                print("Opção inválida")
-        except ValueError:
-            print("Por favor, digite um número válido.")
-
-if __name__ == "__main__":
-    main()
+{
+  "erros_codigo": [
+    {
+      "codigo": "51",
+      "sintomas": ["51","saldo", "limite", "recusado", "sem saldo", "sem limite", "debito", "falta de saldo", "cartao sem fundo", "negado por saldo", "estourou o limite", "conta zerada", "nao passa por saldo", "sem credito", "limite estourado"],
+      "titulo": "Código 51 - Saldo/Limite Insuficiente",
+      "explicacao": "O banco emissor recusou a compra porque a conta não tem saldo (débito) ou o limite de crédito acabou.",
+      "acao": "Orientar o cliente a utilizar outra forma de pagamento (outro cartão, Pix ou dinheiro)."
+    },
+    {
+      "codigo": "01/05",
+      "sintomas":  ["01", "05", "seguranca", "fraude", "bloqueio", "diretrizes", "suspeita", "bloqueado pelo banco", "analise de risco", "compra suspeita", "seguranca do banco", "suspeita de fraude", "bloqueio preventivo"], 
+      "titulo": "Código 01/05 - Bloqueio de Segurança / Fraude",
+      "explicacao": "O banco bloqueou a compra por motivos de segurança, suspeita de fraude ou diretrizes internas da instituição.",
+      "acao": "O cliente deve entrar em contato com o banco emissor do cartão para desbloquear a operação."
+    },
+    {
+      "codigo": "54",
+      "sintomas": ["54", "vencido", "validade", "expirado", "data", "cartao vencido", "passou da validade", "venceu", "ano vencido", "mes vencido", "fora da validade"],  
+      "titulo": "Código 54 - Cartão Expirado",
+      "explicacao": "A data de validade impressa no cartão já expirou.",
+      "acao": "Pedir outro cartão válido para o pagamento."
+    },
+    {
+      "codigo": "62/63",
+      "sintomas": ["62", "63", "restricao", "bloqueio temporario", "contratuais", "problema na conta", "restrito", "bloqueio parcial", "conta bloqueada", "restricao de uso", "bloqueio de conta"], 
+      "titulo": "Código 62/63 - Restrições de Uso",
+      "explicacao": "O banco emissor impôs restrições de uso ao cartão (bloqueio temporário, restrições contratuais ou problemas na conta).",
+      "acao": "Verificar status do cartão diretamente com o banco do cliente."
+    },
+    {
+      "codigo": "55",
+      "sintomas": ["55", "senha", "incorreta", "errada", "senha incorreta", "senha errada", "digitou errado", "pin incorreto", "pin errado", "errou a senha"], 
+      "titulo": "Código 55 - Senha Incorreta",
+      "explicacao": "Senha digitada incorretamente.",
+      "acao": "Pedir para o cliente digitar a senha corretamente, e alertar risco de bloqueio após várias tentativas."
+    },
+    {
+      "codigo": "75",
+      "sintomas": ["75", "tentativas", "bloqueado", "excesso", "senha bloqueada", "muitas tentativas", "bloqueou a senha", "esreveu senha errada muitas vezes", "tentou muito", "bloqueado por senha incorreta"], 
+      "titulo": "Código 75 - Excesso de Tentativas de Senha",
+      "explicacao": "Excesso de tentativas incorretas.",
+      "acao": "Cartão bloqueado pelo banco. O cliente deve regularizar a senha com a instituição financeira."
+    },
+    {
+      "codigo": "68",
+      "sintomas": ["68", "demora", "timeout", "conexao", "rede", "travou", "tempo limite", "demorou", "nao responde", "estourou o tempo", "demorou a responder", "lentidao", "demorando muito", "travado na resposta"], 
+      "titulo": "Código 68 - Time-out de Comunicação",
+      "explicacao": "A transação foi enviada, mas o banco/adquirente demorou muito para responder e a maquininha estourou o tempo limite.",
+      "acao": "Verificar imediatamente o histórico/extrato de vendas antes de tentar passar o cartão novamente para evitar o risco de cobrança duplicada. Se não constar, aguarde um instante e tente de novo."
+    },
+    {
+      "codigo": "91/96",
+      "sintomas":  ["91", "96", "sem sinal", "falha", "comunicacao", "inacessivel", "wifi", "4g", "rede caiu", "sem internet", "sinal oscilando", "fora do ar", "banco fora do ar", "sem conexao", "rede instavel"], 
+      "titulo": "Código 91/96 - Falha de Comunicação / Banco Inacessível",
+      "explicacao": "A rede de comunicação falhou ou o banco emissor está inacessível, impedindo que a transação seja processada.",
+      "acao": "Aguardar alguns instantes, verificar o sinal da máquina (4G/Wi-Fi) e tentar novamente. Se persistir, testar em outra máquina ou sugerir Pix/dinheiro."
+    },
+    {
+      "codigo": "9",
+      "sintomas": ["modalidade", "funcao", "incompativel", "invalida", "credito ou debito", "passou errado", "funcao errada", "escolheu errado", "debito no credito", "credito no debito"], 
+      "explicacao": "Tentativa de uso em função inválida.",
+      "acao": "Selecionar a modalidade correta (débito ou crédito) compatível com o cartão."
+    },
+    {
+      "codigo": "10",
+      "sintomas":  ["mcc", "ramo", "atividade", "estabelecimento", "nao aceito", "segmento nao permitido", "tipo de comercio", "ramo nao permitido"], 
+      "titulo": "MCC Incompatível",
+      "explicacao": "O ramo de atividade do estabelecimento não é aceito por esse tipo de cartão.",
+      "acao": "Verificar status do cartão diretamente com o banco do cliente."
+    }
+  ],
+  "problemas_fisicos": [
+    {
+      "id": "atolamento",
+      "sintomas": ["preso", "enganchado", "amassado", "atolado", "travou", "atolamento", "guilhotina", "enroscado", "nao puxa papel", "travado", "encalhado", "emperrado"], 
+      "titulo": "Atolamento de Papel",
+      "explicacao": "A bobina rodou ou foi colocada torta, trancando a guilhotina ou a tampa de saída.",
+      "acao": "Abra a tampa do compartimento, ajuste o alinhamento da bobina puxando um pedaço de papel para fora e feche firmemente até ouvir o clique."
+    },
+    {
+      "id": "papel_branco",
+      "sintomas": ["branco", "sem texto", "apagado", "nao sai nada", "folha branca", "comprovante em branco", "imprimindo em branco", "papel saiu liso", "comprovante liso", "saiu sem nada escrito"], 
+      "titulo": "Comprovante Saindo em Branco",
+      "explicacao": "O papel térmico foi inserido do lado errado no compartimento da impressora.",
+      "acao": "Abra o compartimento e inverta o lado da bobina de papel, o lado sensível ao calor precisa ficar virado para a cabeça de impressão. Reimprima a 2ª via da última transação."
+    },
+    {
+      "id": "bateria_fraca",
+      "sintomas": ["bateria", "fraca", "carga", "motor", "abaixo", "descarregada", "pouca bateria", "bateria morrendo", "nao imprime porque ta sem bateria", "aviso de bateria", "bateria descarregando", "quase sem bateria"],
+      "titulo": "Aviso de Bateria Fraca na Impressão",
+      "explicacao": "O motor térmico da impressora exige alta corrente elétrica e é bloqueado pelo sistema se a bateria estiver abaixo de 5% a 10%.",
+      "acao": "Conecte a maquininha ao carregador imediatamente. A aprovação da venda foi concluída, reimprima assim que atingir o nível mínimo de carga."
+    }
+  ]
+}
